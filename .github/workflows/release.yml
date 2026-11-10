@@ -64,15 +64,13 @@ jobs:
           releaseBody: |
             ## 更新内容
 
-            - 修复：编辑待办时编辑框固定两行、需要在小框内滚动查看的问题，现在编辑区随内容完整展开
-            - 修复：进入编辑态时字号从 14px 变为 16px 导致文字重新折行的问题，编辑与展示完全一致
-            - 新增：GitHub Actions 自动构建并发布 Release
+            本版本的变更条目见 [更新日志](https://github.com/${{ github.repository }}/blob/${{ github.ref_name }}/docs/CHANGELOG.md)。
 
             ## 下载
 
             Windows x64 安装包（NSIS，便携模式），解压即用；若系统缺少 WebView2 运行时请按提示安装。
 
-            完整变更见 [提交历史](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }})。
+            > 安装包未做代码签名，首次运行时 SmartScreen 可能提示「未知发布者」，选择「仍要运行」即可。
           releaseDraft: false
           prerelease: false
           args: --bundles nsis

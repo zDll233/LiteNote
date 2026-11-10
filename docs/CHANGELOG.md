@@ -2,6 +2,18 @@
 
 轻签 LiteNote 的版本变更记录。版本号与 `src-tauri/tauri.conf.json` 保持一致，安装包见 [GitHub Releases](https://github.com/zDll233/LiteNote/releases)。
 
+## [1.5.2] - 2026-11-10
+
+### 变更
+
+- **顶栏**：移除左上角的版本号显示，只保留应用名，界面更简洁
+- **关于弹窗**：GitHub 链接改为当前维护仓库 [zDll233/LiteNote](https://github.com/zDll233/LiteNote)
+
+### 文档
+
+- README（中 / 英）中的 Issues、Releases、`git clone`、Star History 地址统一为当前仓库，并修正 `SeanZhusp` 拼写错误
+- 补回此前被误删的 `docs/CHANGELOG.md`，并补录 `1.3.0` ~ `1.5.1` 的变更
+
 ## [1.5.1] - 2026-11-10
 
 ### 修复

@@ -1,6 +1,6 @@
 [package]
 name = "LiteNote"
-version = "1.5.1"
+version = "1.5.2"
 description = "A Tauri App"
 authors = ["秋枫"]
 edition = "2021"
