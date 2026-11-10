@@ -9,7 +9,7 @@
 Lightweight, customizable local to-do desktop widget<br>
 Built with Tauri 2 + React
 
-[Issues](https://github.com/SeaZhusp/LiteNote/issues) · [Changelog](docs/CHANGELOG.md)
+[Issues](https://github.com/zDll233/LiteNote/issues) · [Changelog](docs/CHANGELOG.md)
 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -62,7 +62,7 @@ Many to-do and note-taking tools are feature-packed and heavy — not ideal for 
 
 ## Installation
 
-Download the latest version from [GitHub Releases](https://github.com/SeaZhusp/LiteNote/releases).
+Download the latest version from [GitHub Releases](https://github.com/zDll233/LiteNote/releases).
 
 > **Windows users:** Some enterprise/LTSC editions of Windows 10 may lack WebView2 Runtime. The installer bundles a bootstrapper to install it automatically. If issues persist, manually install [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/).
 
@@ -81,7 +81,7 @@ Download the latest version from [GitHub Releases](https://github.com/SeaZhusp/L
 ### Steps
 
 ```bash
-git clone https://github.com/SeaZhusp/LiteNote.git
+git clone https://github.com/zDll233/LiteNote.git
 cd LiteNote
 
 pnpm install
@@ -95,11 +95,11 @@ pnpm dev
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=SeaZhusp/LiteNote&type=Date&legend=top-left)](https://star-history.com/#SeaZhusp/LiteNote&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=zDll233/LiteNote&type=Date&legend=top-left)](https://star-history.com/#zDll233/LiteNote&Date)
 
 ## Contributing
 
-Issues and pull requests are welcome! Please submit via [GitHub Issues](https://github.com/SeaZhusp/LiteNote/issues).
+Issues and pull requests are welcome! Please submit via [GitHub Issues](https://github.com/zDll233/LiteNote/issues).
 
 ## License
 

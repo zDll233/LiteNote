@@ -9,7 +9,7 @@
 轻量、可定制的本地待办桌面小部件<br>
 基于 Tauri 2 + React 构建
 
-[反馈问题](https://github.com/SeaZhusp/LiteNote/issues) · [更新日志](docs/CHANGELOG.md)
+[反馈问题](https://github.com/zDll233/LiteNote/issues) · [更新日志](docs/CHANGELOG.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![React 19](https://img.shields.io/badge/React-19-blue?logo=react)
@@ -61,7 +61,7 @@
 
 ## 下载安装
 
-前往 [GitHub Releases](https://github.com/SeaZhusp/LiteNote/releases) 下载最新版本。
+前往 [GitHub Releases](https://github.com/zDll233/LiteNote/releases) 下载最新版本。
 
 > **Windows 用户注意：** 部分精简版/企业版 Windows 10 可能未安装 WebView2 运行时。安装包已内置引导下载，若仍有问题请手动安装 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)。
 
@@ -80,7 +80,7 @@
 ### 步骤
 
 ```bash
-git clone https://github.com/SeaZhusp/LiteNote.git
+git clone https://github.com/zDll233/LiteNote.git
 cd LiteNote
 
 pnpm install
@@ -94,11 +94,11 @@ pnpm dev
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=SeaZhusp/LiteNote&type=Date&legend=top-left)](https://star-history.com/#SeaZhusp/LiteNote&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=zDll233/LiteNote&type=Date&legend=top-left)](https://star-history.com/#zDll233/LiteNote&Date)
 
 ## 贡献
 
-欢迎通过 [Issue](https://github.com/SeanZhusp/LiteNote/issues) 反馈问题或提交 Pull Request。
+欢迎通过 [Issue](https://github.com/zDll233/LiteNote/issues) 反馈问题或提交 Pull Request。
 
 ## 许可证
 

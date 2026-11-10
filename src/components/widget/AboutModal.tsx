@@ -77,7 +77,7 @@ export function AboutModal({ open, locale, onClose }: AboutModalProps) {
               icon={<GitHubIcon />}
               label="GitHub"
               desc={isZh ? "欢迎 Star & Issue，一起完善轻签！" : "Star & Issue are welcome!"}
-              href="https://github.com/SeaZhusp/LiteNote"
+              href="https://github.com/zDll233/LiteNote"
             />
           </div>
         </Section>
