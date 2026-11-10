@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useTodoStore } from "@/stores/todoStore";
@@ -11,6 +11,17 @@ import type { TodoItem } from "@/types/todo";
 import { useNow } from "@/hooks/useNow";
 import { RowActionIcon } from "./RowActionIcon";
 import { Tooltip } from "./Tooltip";
+
+/** 向上查找最近的纵向滚动容器（用于把编辑中的待办滚动进可视区） */
+function findScrollParent(el: HTMLElement | null): HTMLElement | null {
+  let node = el?.parentElement ?? null;
+  while (node && node !== document.body) {
+    const { overflowY } = getComputedStyle(node);
+    if (overflowY === "auto" || overflowY === "scroll") return node;
+    node = node.parentElement;
+  }
+  return null;
+}
 
 interface TodoRowProps {
   todo: TodoItem;
@@ -139,6 +150,8 @@ function ManagementTodoRow({
   const accent = COLOR_DOT_STYLE[todo.colorId].background;
   const trashColor = "var(--ln-theme-text-secondary)";
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  // 行容器（用于编辑时把整行滚动进可视区）
+  const rowRef = useRef<HTMLDivElement>(null);
 
   const setTodoNote = useTodoStore((s) => s.setTodoNote);
   const setTodoProgress = useTodoStore((s) => s.setTodoProgress);
@@ -202,17 +215,66 @@ function ManagementTodoRow({
     [todo.isRecurring, todo.recurrenceType, todo.recurrenceConfig, locale],
   );
 
-  // 进入编辑态时，光标定位到文本末尾
-  useEffect(() => {
-    if (editing && textareaRef.current) {
-      const el = textareaRef.current;
-      el.focus();
-      el.setSelectionRange(el.value.length, el.value.length);
+  // 编辑态：textarea 高度跟随内容完全展开（不再固定行数 + 内部滚动）
+  const resizeEditingTextarea = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, []);
+
+  // 编辑中：把光标所在（末尾）位置保持在列表可视区内
+  const keepEditingCaretVisible = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    const scroller = findScrollParent(el);
+    if (!scroller) return;
+    const pad = 8;
+    const viewport = scroller.getBoundingClientRect();
+    const rect = el.getBoundingClientRect();
+    if (rect.bottom > viewport.bottom - pad) {
+      scroller.scrollTop += Math.min(rect.bottom - viewport.bottom + pad, rect.height);
     }
-  }, [editing]);
+  }, []);
+
+  // 进入编辑态时，光标定位到文本末尾，并确保编辑区落在可视区内
+  useEffect(() => {
+    if (!editing) return;
+    const el = textareaRef.current;
+    if (!el) return;
+    el.focus();
+    el.setSelectionRange(el.value.length, el.value.length);
+    rowRef.current?.scrollIntoView({ block: "nearest" });
+    keepEditingCaretVisible();
+  }, [editing, keepEditingCaretVisible]);
+
+  // 高度随内容自适应（换行/回车/粘贴后立即重算，避免出现内部滚动条）
+  useLayoutEffect(() => {
+    if (!editing) return;
+    resizeEditingTextarea();
+    const el = textareaRef.current;
+    // 在文本末尾连续输入时，保证光标所在行不会被挤出列表可视区
+    if (el && el.selectionStart === el.value.length) {
+      keepEditingCaretVisible();
+    }
+  }, [editing, todo.text, resizeEditingTextarea, keepEditingCaretVisible]);
+
+  // 宽度变化（窗口缩放、列表出现滚动条）会重新换行，需要按新宽度重算高度
+  useEffect(() => {
+    if (!editing) return;
+    const el = textareaRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    let lastWidth = -1;
+    const observer = new ResizeObserver(() => {
+      if (el.clientWidth === lastWidth) return;
+      lastWidth = el.clientWidth;
+      resizeEditingTextarea();
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [editing, resizeEditingTextarea]);
 
   // 备注/进度气泡卡片：Esc 关闭 + 外部点击关闭
-  const rowRef = useRef<HTMLDivElement>(null);
   // 右键菜单触发时，自动展开该待办的气泡
   useEffect(() => {
     if (openNoteForId && openNoteForId === todo.id) {
@@ -245,6 +307,14 @@ function ManagementTodoRow({
   const style = {
     transform: CSS.Transform.toString(sortable.transform),
     transition: sortable.transition,
+  };
+
+  // 编辑框字号/行高与展示态保持一致：全局 input/textarea 的 font: inherit 会覆盖 text-* 工具类，
+  // 若不显式指定，进入编辑时文字会突然从 14px 变成 16px 并重新折行
+  const editingTextStyle: React.CSSProperties = {
+    color: "var(--ln-theme-text)",
+    fontSize: "0.875rem",
+    lineHeight: 1.375,
   };
 
   return (
@@ -340,9 +410,9 @@ function ManagementTodoRow({
           <textarea
             ref={textareaRef}
             data-tauri-no-drag
-            className="min-h-10 w-0 flex-1 resize-none bg-transparent text-sm leading-snug outline-none ring-0"
-            style={{ color: "var(--ln-theme-text)" }}
-            rows={2}
+            className="min-h-10 w-0 flex-1 resize-none overflow-hidden bg-transparent text-sm leading-snug outline-none ring-0"
+            style={editingTextStyle}
+            rows={1}
             value={todo.text}
             onChange={(e) => onChangeText(e.target.value)}
             onBlur={onEndEdit}
