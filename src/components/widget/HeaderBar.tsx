@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { getVersion } from "@tauri-apps/api/app";
 import type { Locale } from "@/i18n";
 import type { MessageKey } from "@/i18n/messages";
 import { t } from "@/i18n";
@@ -31,13 +29,6 @@ export function HeaderBar({
   onHide,
 }: HeaderBarProps) {
   const mk = (key: MessageKey) => t(locale, key);
-  const [version, setVersion] = useState("");
-
-  useEffect(() => {
-    getVersion()
-      .then((v) => setVersion(`v${v}`))
-      .catch(() => setVersion(""));
-  }, []);
 
   return (
     <header
@@ -52,9 +43,6 @@ export function HeaderBar({
         <span className="truncate text-sm font-semibold leading-none" style={{ color: "var(--ln-theme-text)" }}>
           {mk("appName")}
         </span>
-        {version ? (
-          <span className="shrink-0 text-xs leading-none" style={{ color: "var(--ln-theme-text-muted)" }}>{version}</span>
-        ) : null}
       </div>
       <div
         className="flex cursor-default items-center gap-0.5 pr-1"
