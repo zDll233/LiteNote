@@ -1,0 +1,78 @@
+# 轻签 LiteNote 发布流水线
+#
+# 触发方式：推送 v* 形式的 tag，例如 `git tag v1.5.1 && git push origin v1.5.1`
+# 产物：Windows x64 NSIS 安装包（portable 模式），由 tauri-action 自动创建/更新同名 GitHub Release
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+# 创建 Release 需要 GITHUB_TOKEN 具备 contents 写权限
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    name: Windows x64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+          shared-key: release
+
+      # 仓库里的 .cargo/config.toml 指向 USTC 镜像（国内加速用），
+      # GitHub Runner 直连 crates.io 更快更稳，因此仅在本次构建中移除
+      - name: Use crates.io registry
+        shell: pwsh
+        run: Remove-Item "src-tauri/.cargo/config.toml" -Force -ErrorAction SilentlyContinue
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and publish release
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: "轻签 LiteNote __VERSION__"
+          releaseBody: |
+            ## 更新内容
+
+            - 修复：编辑待办时编辑框固定两行、需要在小框内滚动查看的问题，现在编辑区随内容完整展开
+            - 修复：进入编辑态时字号从 14px 变为 16px 导致文字重新折行的问题，编辑与展示完全一致
+            - 新增：GitHub Actions 自动构建并发布 Release
+
+            ## 下载
+
+            Windows x64 安装包（NSIS，便携模式），解压即用；若系统缺少 WebView2 运行时请按提示安装。
+
+            完整变更见 [提交历史](https://github.com/${{ github.repository }}/commits/${{ github.ref_name }})。
+          releaseDraft: false
+          prerelease: false
+          args: --bundles nsis
